@@ -61,3 +61,5 @@ class Board(object):
         return ret
 
 
+h = Board()
+print(h.hashmap_mices.data)
