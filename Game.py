@@ -267,27 +267,26 @@ class Game(object):
         return positions
 
     def is_end(self):
-        if self.black_pieces_in_hand == 0 and self.white_pieces_in_hand == 0:
-            count_white = 0
-            count_black = 0
-            black_moves = self.get_all_moves("B")
-            white_moves = self.get_all_moves("W")
-            if len(white_moves) == 0:
+        count_white = 0
+        count_black = 0
+        black_moves = self.get_all_moves("B")
+        white_moves = self.get_all_moves("W")
+        if len(white_moves) == 0:
+            return True, "B"
+        elif len(black_moves) == 0:
+            return True, "W"
+
+        for row in self.current_state.board:
+            count_white += row.count("W")
+            count_black += row.count("B")
+
+            if count_white == 2:
                 return True, "B"
-            elif len(black_moves) == 0:
+            elif count_black == 2:
                 return True, "W"
-
-            for row in self.board:
-                count_white += row.count("W")
-                count_black += row.count("B")
-
-                if count_white == 2:
-                    return True, "B"
-                elif count_black == 2:
-                    return True, "W"
-            
-
+        
         return False, None
+
     def is_move_correct_1(self, move):
         if move in self.all_positions:
             free_positions = self.get_all_free_positions()
@@ -337,43 +336,88 @@ class Game(object):
         if self.current_state.board[x3][y3] == player_turn and self.current_state.board[x4][y4] == player_turn:
             return True
         return False
-    def play(self):
-        while True:
-            while self.black_pieces_in_hand > 0:
-                print(self.current_state)
-                player_turn = "W"
-                other_player = "B"
-                move = self.first_moves(player_turn)
-                self.white_pieces_in_hand -= 1
-                self.white_pieces_on_board += 1
-                if self.is_mice(move, player_turn):
-                    delete = input("Dobili ste micu. Izaberite koju protivnicku figuru uzimate: ")
-                    other_player_positions = self.get_all_used_positions(other_player)
-                    while delete not in other_player_positions:
-                        print("Molim vas da unesete tacnu poziciju.")
-                        delete = input("Dobili ste micu. Izaberite koju protivnicku figuru uzimate: ")
-                    x, y = int(delete[0]), int(delete[1])
-                    self.current_state.board[x][y] = 0
-                    self.black_pieces_on_board -= 1
-                print(self.current_state)
-                player_turn = "B"
-                other_player = "W"
-                move = self.first_moves(player_turn)
-                self.black_pieces_in_hand -= 1
-                self.black_pieces_on_board += 1
-                if self.is_mice(move, player_turn):
-                    delete = input("Dobili ste micu. Izaberite koju protivnicku figuru uzimate: ")
-                    other_player_positions = self.get_all_used_positions(other_player)
-                    while delete not in other_player_positions:
-                        print("Molim vas da unesete tacnu poziciju.")
-                        delete = input("Dobili ste micu. Izaberite koju protivnicku figuru uzimate: ")
-                    x, y = int(delete[0]), int(delete[1])
-                    self.current_state.board[x][y] = 0
-                    self.white_pieces_on_board -= 1
-            
-                
-            break
+    def delete_piece(self, other_player):
+        delete = input("Dobili ste micu. Izaberite koju protivnicku figuru uzimate: ")
+        other_player_positions = self.get_all_used_positions(other_player)
+        while delete not in other_player_positions or self.is_mice(delete, other_player):
+            counter = 0
+            for i in other_player_positions:
+                if self.is_mice(i, other_player):
+                    counter += 1
+            if counter == len(other_player_positions):
+                break
+            print("Molim vas da unesete tacnu poziciju. Ne mozete ni skloniti figuru koja je u mici.")
+            delete = input("Dobili ste micu. Izaberite koju protivnicku figuru uzimate: ")
+        x, y = int(delete[0]), int(delete[1])
+        self.current_state.board[x][y] = 0
+        if other_player == "B":
+            self.black_pieces_on_board -= 1
+        else:
+            self.white_pieces_on_board -= 1
+    def playing_2(self, player_turn, other_player):
+        which_piece = input("Unesite koju figuru hocete da pomerite: ")
+        all_positions = self.get_all_used_positions(player_turn)
+        while which_piece not in all_positions:
+            print("Molim vas da unesete vasu figuru koju hocete da pomerite.")
+            which_piece = input("Unesite koju figuru hocete da pomerite: ")
+        
+        move = input("Unesite gde hocete da pomerite figuru: ")
+        all_moves = self.get_all_moves(player_turn)
+        while move not in self.all_positions:
+            for i in all_moves:
+                if which_piece == i['xy1'] and move == i['xy2']:
+                    break
+            print("Ne mozete pomeriti figuru na toj poziciji.")
+            move = input("Unesite gde hocete da pomerite figuru: ")
+        x, y = int(move[0]), int(move[1])
+        self.current_state.board[x][y] = player_turn
+        x, y = int(which_piece[0]), int(which_piece[1])
+        self.current_state.board[x][y] = 0
+        if self.is_mice(move, player_turn):
+            self.delete_piece(other_player)
+        print(self.current_state)
 
+    def play(self):
+        while self.black_pieces_in_hand > 0:
+            print(self.current_state)
+            player_turn = "W"
+            other_player = "B"
+            move = self.first_moves(player_turn)
+            self.white_pieces_in_hand -= 1
+            self.white_pieces_on_board += 1
+            if self.is_mice(move, player_turn):
+                self.delete_piece(other_player)
+
+            print(self.current_state)
+            player_turn = "B"
+            other_player = "W"
+            move = self.first_moves(player_turn)
+            self.black_pieces_in_hand -= 1
+            self.black_pieces_on_board += 1
+            if self.is_mice(move, player_turn):
+                self.delete_piece(other_player)
+        
+        while True:
+            print(self.current_state)
+            player_turn = "W"
+            other_player = "B"
+            self.playing_2(player_turn, other_player)
+
+            is_end, player = self.is_end()
+            if is_end:
+                print("Pobedio je: " + player)
+                break
+
+            print(self.current_state)
+            player_turn = "B"
+            other_player = "W"
+            self.playing_2(player_turn, other_player)
+
+            is_end, player = self.is_end()
+            if is_end:
+                print("Pobedio je: " + player)
+                break
+            
 
 
 game = Game()
