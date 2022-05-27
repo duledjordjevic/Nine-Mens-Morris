@@ -13,10 +13,21 @@ class HashMap(object):
         if self.data[hash_key] is None:
             self.data[hash_key] = value
         else:
-             bucket = []
-             bucket.append(self.data[hash_key])
-             bucket.append(value)
-             self.data[hash_key] = bucket
+            if type(value) == list:
+                bucket = []
+                bucket.append(self.data[hash_key])
+                bucket.append(value)
+            else:
+                bucket = []
+                if type(self.data[hash_key]) == list:
+                    for i in self.data[hash_key]:
+                        bucket.append(i)
+                    bucket.append(value)
+                else:
+                    bucket.append(self.data[hash_key])
+                    bucket.append(value)
+                
+            self.data[hash_key] = bucket
 
     def __getitem__(self, key):
         hash_key = self.hashing_function(key)

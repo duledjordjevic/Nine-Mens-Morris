@@ -1,16 +1,18 @@
 from timeit import timeit
+import time
+from tracemalloc import start
 from hashmap import HashMap
 class Board(object):
 
     def __init__(self):
         self.board = [
-            [0, None, None, 0, None, None, 0],
-            [None, 0, None, 0, None, 0, None],
+            ["B", None, None, "B", None, None, "B"],
+            [None, 0, None, "B", None, 0, None],
             [None, None, 0, 0, 0 , None, None],
             [0, 0, 0, None, 0, 0, 0],
-            [None, None, 0, 0, 0 , None, None],
-            [None, 0, None, 0, None, 0, None],
-            [0, None, None, 0, None, None, 0]
+            [None, None, "W", "W", "W" , None, None],
+            [None, "B", None, "B", None, 0, None],
+            ["B", None, None, "W", None, None, "W"]
         ]
         self.all_mices = [
             ["00", "03", "06"],
@@ -30,8 +32,43 @@ class Board(object):
             ["63", "53", "43"],
             ["34", "35", "36"]
         ]
+        ["00", "03", "06", "11", "13", "15", "22", "23", "24", "30", "31", "32", "34", "35", "36", "42", "43", "44", "51", "53", "55", "60", "63", "66"]
+        self.all_deuces = [
+            ["00", "03"],
+            ["00", "30"],
+            ["03", "13"],
+            ["03", "06"],
+            ["06", "36"],
+            ["11", "13"],
+            ["11", "31"],
+            ["13", "23"],
+            ["13", "15"],
+            ["15", "35"],
+            ["22", "32"],
+            ["22", "23"],
+            ["23", "24"],
+            ["24", "34"],
+            ["30", "60"],
+            ["30", "31"],
+            ["31", "32"],
+            ["31", "51"],
+            ["32", "42"],
+            ["34", "35"],
+            ["34", "44"],
+            ["35", "36"],
+            ["35", "55"],
+            ["36", "66"],
+            ["42", "43"],
+            ["43", "44"],
+            ["43", "53"],
+            ["51", "53"],
+            ["53", "55"],
+            ["53", "63"],
+            ["60", "63"],
+            ["63", "66"]
+        ]
         self.hashmap_mices = self.hashmap_of_mices()
-
+        self.hashmap_deuces = self.hashmap_of_deuces()
     def hashmap_of_mices(self):
         h = HashMap(67)
         for i in self.all_mices:
@@ -40,7 +77,13 @@ class Board(object):
             h[i[2]] = [i[1], i[0]]
             
         return h
+    def hashmap_of_deuces(self):
+        h = HashMap(67)
+        for i in self.all_deuces:
+            h[i[0]] = i[1]
+            h[i[1]] = i[0]
 
+        return h
     def __str__(self):
         ret = "    0   1   2   3   4   5   6\n"
         ret += "-----------------------------\n"
@@ -60,6 +103,3 @@ class Board(object):
 
         return ret
 
-
-h = Board()
-print(h.hashmap_mices.data)
