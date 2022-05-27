@@ -1,6 +1,7 @@
 from copy import deepcopy
-# from Game import game
-
+from tracemalloc import start
+from Game import game
+import time
 def number_of_mices(game):
     black_counter = 0
     white_counter = 0
@@ -43,33 +44,97 @@ def number_of_deuce(game, player_turn):
             count += 1
 
     return count
+def number_of_double_mices(game, player_turn):
+    used_positions = game.get_all_used_positions(player_turn)
+    count_all = 0
+    for i in used_positions:
+        count = 0
+        for position in game.current_state.hashmap_mices[i]:
+            x1, y1 = int(position[0][0]), int(position[0][1])
+            x2, y2 = int(position[1][0]), int(position[1][1])
+            if game.current_state.board[x1][y1] == game.current_state.board[x2][y2] == player_turn:
+                count += 1
+        if count == 2:
+            count_all += 1
 
-def heuristic(game):
+    return count_all
+
+def heuristic(game, phase_of_game):
+    h = 0
+
     white_mices, black_mices = number_of_mices(game)
-    h = black_mices - white_mices
+    mices = black_mices - white_mices
+
     black_blocked = number_of_blocked_pieces(game, "B")
     white_blocked = number_of_blocked_pieces(game, "W")
-    h += black_blocked - white_blocked
+    blocked = white_blocked - black_blocked
+
     white_all, black_all  = counter_of_pices(game)
-    h += black_all - white_all
+    all_pieces = black_all - white_all
+
     black_deuces = number_of_deuce(game, "B")
     white_deuces = number_of_deuce(game, "W")
-    h += black_deuces - white_deuces
+    deuces = black_deuces - white_deuces
+
+    black_double_mices = number_of_double_mices(game, "B")
+    white_double_mices = number_of_double_mices(game, "W")
+    double_mices = black_double_mices - white_double_mices
+
+    tf, who_win = game.is_end()
+    win = 0
+    if tf:
+        if who_win == "W":
+            win = -1
+        else:
+            win = 1
+    if phase_of_game == 0:
+        h = (26 * mices) + (blocked * 1) + (all_pieces * 9) + (double_mices * 10) 
+        print(h)
+    else:
+        h = (43 * mices) + (blocked * 10) + (all_pieces * 11) + (double_mices * 8) + (win * 1086)
     return h
-# def minimax(board, depth, who_play_tf):
-#     end, player_win = game.is_end()
-#     if end or depth == 0:
-#         return board.heuristic(), board
-    
-#     if who_play_tf:
-#         maxHeuristic = -10000
-#         best_move = None
 
-#         return maxHeuristic, best_move
-#     else:
-
-def minimax(game):
+def minimax_1(game, position, depth, max_player):
     game = deepcopy(game)
-    game.current_state.board[0][0] = "W"
-    print(game.current_state)
-    print(heuristic(game))
+    end, player_win = game.is_end()
+    if end or depth == 0:
+        return heuristic(game, 0), position
+    
+    if max_player:
+        maxHeuristic = float('-inf')
+        best_move = None
+        all_moves = game.get_all_free_positions()
+        for move in all_moves:
+            x, y = int(move['xy'][0]), int(move['xy'][1])
+            game.current_state.board[x][y] = "B"
+            print(game.current_state)
+            heuris = minimax_1(game, move, depth-1, False)
+            maxHeuristic = max(maxHeuristic, heuris[0])
+            if maxHeuristic == heuris[0]:
+                best_move = move
+        return maxHeuristic, best_move
+    else:
+        minHeuristic = float('inf')
+        best_move = None
+        all_moves = game.get_all_free_positions()
+        for move in all_moves:
+            x, y = int(move['xy'][0]), int(move['xy'][1])
+            game.current_state.board[x][y] = "W"
+            print(game.current_state)
+            heuris = minimax_1(game, move, depth-1, True)
+            minHeuristic = min(minHeuristic, heuris[0])
+            if minHeuristic == heuris[0]:
+                best_move = move
+        return minHeuristic, best_move
+
+# def minimax_2(game):
+#     game = deepcopy(game)
+#     # game.current_state.board[0][0] = "W"
+#     # print(game.current_state)
+#     print(heuristic(game, 0))
+#     # print(heuristic(game))
+start = time.time()
+# print(minimax_1(game, None, 4, True))
+end = time.time()
+print(game.current_state)
+print(end - start)

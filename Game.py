@@ -2,7 +2,7 @@ from turtle import position
 from Board import Board
 import time
 from copy import deepcopy
-from minimax_algorithm import minimax
+# from minimax_algorithm import minimax_1
 class Game(object):
 
     def __init__(self):
@@ -278,14 +278,16 @@ class Game(object):
         elif len(black_moves) == 0:
             return True, "W"
 
+        count_white = 0
+        count_black = 0
         for row in self.current_state.board:
             count_white += row.count("W")
             count_black += row.count("B")
 
-            if count_white == 2:
-                return True, "B"
-            elif count_black == 2:
-                return True, "W"
+        if count_white == 2:
+            return True, "B"
+        elif count_black == 2:
+            return True, "W"
         
         return False, None
 
@@ -420,58 +422,13 @@ class Game(object):
                 print("Pobedio je: " + player)
                 break
             
-    # def number_of_mices(self):
-    #     black_counter = 0
-    #     white_counter = 0
-    #     for i in self.current_state.all_mices:
-    #         x,y = int(i[0][0]), int(i[0][1])
-    #         player = self.current_state.board[x][y]
-    #         if player != 0:
-    #             player1, player2 = self.current_state.board[int(i[1][0])][int(i[1][1])], self.current_state.board[int(i[2][0])][int(i[2][1])]
-    #             if player == player1 == player2 == "B":
-    #                 black_counter += 1
-    #             elif player == player1 == player2 == "W":
-    #                 white_counter += 1
-    #     return white_counter, black_counter
-    # def number_of_blocked_pieces(self, player_turn):
-    #     blocked_moves = 0
-    #     all_moves = self.get_all_moves(player_turn)
-    #     used_positions = self.get_all_used_positions(player_turn)
-    #     all_moves_positions = []
-    #     for i in all_moves:
-    #         if i['xy1'] not in all_moves_positions:
-    #             all_moves_positions.append(i['xy1'])
-
-    #     for i in used_positions:
-    #         if i not in all_moves_positions:
-    #             blocked_moves += 1
-
-    #     return blocked_moves
-    # def counter_of_pices(self):
-    #     black = len(self.get_all_used_positions("B"))
-    #     white = len(self.get_all_used_positions("W"))
-    #     return white, black
-    # def number_of_deuce(self, player_turn):
-    #     used_positions = self.get_all_used_positions(player_turn)
-    #     count = 0
-    #     for i in self.current_state.all_deuces:
-    #         x1, y1 = int(i[0][0]), int(i[0][1])
-    #         x2, y2 = int(i[1][0]), int(i[1][1])
-
-    #         if self.current_state.board[x1][y1] == self.current_state.board[x2][y2] == player_turn:
-    #             count += 1
-
-    #     return count
     
-    # def heuristic(self):
-    #     white_mices, black_mices = self.get 
-    #     return h
-    def blabla(self):
-        minimax(self)
+#     def blabla(self):
+#         print(minimax_1(self, None, 3, True))
 
 game = Game()
-start = time.time()
-game.blabla()
-end = time.time()
+# start = time.time()
+# game.blabla()
+# end = time.time()
 
-print(start - end)
+# print(start - end)
