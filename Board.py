@@ -6,13 +6,13 @@ class Board(object):
 
     def __init__(self):
         self.board = [
-            ["W", None, None, "B", None, None, "W"],
+            ["W", None, None, 0, None, None, 0],
             [None, 0, None, 0, None, 0, None],
             [None, None, 0, 0, 0 , None, None],
-            ["B", 0, "B", None, 0, 0, "W"],
+            [0, 0, 0, None, 0, 0, 0],
             [None, None, 0, 0, 0 , None, None],
             [None, 0, None, 0, None, 0, None],
-            ["B", None, None, "W", None, None, "W"]
+            [0, None, None, 0, None, None, 0]
         ]
         self.all_mices = [
             ["00", "03", "06"],

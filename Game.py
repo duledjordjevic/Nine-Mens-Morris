@@ -383,9 +383,15 @@ class Game(object):
 
     def play(self):
         while self.black_pieces_in_hand > 0:
+            break
             print(self.current_state)
             player_turn = "W"
             other_player = "B"
+            all_moves = self.get_all_free_positions()
+            moves_str = ""
+            for move in all_moves:
+                moves_str += move['xy'] + " "
+            print("Slobodne pozicije na kojima mozete odigrate: " + moves_str)
             move = self.first_moves(player_turn)
             self.white_pieces_in_hand -= 1
             if self.is_mice(move, player_turn):
@@ -402,6 +408,12 @@ class Game(object):
             print(self.current_state)
             player_turn = "W"
             other_player = "B"
+            all_moves = self.get_all_moves("W")
+            moves_str = ""
+            for move in all_moves:
+                moves_str +=  move['xy1']  + " --> " + move['xy2'] + "\n"
+            print("Potezi koje mozete odigrati:")
+            print(moves_str)
             self.playing_2(player_turn, other_player)
 
             is_end, player = self.is_end()
