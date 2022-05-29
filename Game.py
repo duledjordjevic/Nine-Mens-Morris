@@ -2,7 +2,7 @@ from turtle import position
 from Board import Board
 import time
 from copy import deepcopy
-# from minimax_algorithm import minimax_1
+from minimax_algorithm import minimax_1, minimax_2
 class Game(object):
 
     def __init__(self):
@@ -388,18 +388,15 @@ class Game(object):
             other_player = "B"
             move = self.first_moves(player_turn)
             self.white_pieces_in_hand -= 1
-            self.white_pieces_on_board += 1
             if self.is_mice(move, player_turn):
                 self.delete_piece(other_player)
 
-            print(self.current_state)
-            player_turn = "B"
-            other_player = "W"
-            move = self.first_moves(player_turn)
+            start = time.time()
+            board = minimax_1(self,2, True, float("-inf"), float("inf"))[1].current_state
+            end = time.time()
+            print(end - start)
+            self.current_state.board = board.board
             self.black_pieces_in_hand -= 1
-            self.black_pieces_on_board += 1
-            if self.is_mice(move, player_turn):
-                self.delete_piece(other_player)
         
         while True:
             print(self.current_state)
@@ -412,10 +409,11 @@ class Game(object):
                 print("Pobedio je: " + player)
                 break
 
-            print(self.current_state)
-            player_turn = "B"
-            other_player = "W"
-            self.playing_2(player_turn, other_player)
+            start = time.time()
+            board = minimax_2(self,3, True, float("-inf"), float("inf"))[1].current_state
+            end = time.time()
+            print(end - start)
+            self.current_state.board = board.board
 
             is_end, player = self.is_end()
             if is_end:
@@ -423,12 +421,3 @@ class Game(object):
                 break
             
     
-#     def blabla(self):
-#         print(minimax_1(self, None, 3, True))
-
-game = Game()
-# start = time.time()
-# game.blabla()
-# end = time.time()
-
-# print(start - end)
