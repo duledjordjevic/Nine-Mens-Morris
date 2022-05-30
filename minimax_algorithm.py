@@ -1,7 +1,8 @@
 from copy import deepcopy
 from tracemalloc import start
-# from Game import game 
+# from Game import game
 import time
+from wsgiref.simple_server import demo_app
 def number_of_mices(game):
     black_counter = 0
     white_counter = 0
@@ -150,7 +151,7 @@ def heuristic(game, phase_of_game):
         else:
             win = 1
     if phase_of_game == 0:
-        h = (mice_blocked * 100) + (50 * mices) + (blocked * 1) + (all_pieces * 9) + (deuces * 10)  + (7 * three_piece_config)
+        h = (mice_blocked * 30) + (50 * mices) + (blocked * 1) + (all_pieces * 9) + (deuces * 10)  + (7 * three_piece_config)
     else:
         h = (mice_blocked * 14) + (43 * mices) + (blocked * 10) + (all_pieces * 11) + (double_mices * 8)  + (win * 1086)
     # h = (mice_blocked * 20) + (mices * 50) + (blocked * 5) + (all_pieces * 20) + (deuces * 5) + (three_piece_config * 10) + (double_mices * 100) + (win * 10000)
@@ -178,10 +179,13 @@ def minimax_mice(game, player_turn):
     return best_move
 
 def get_all_moves_1(game, player_turn):
+    from Game import Game
     moves = []
     all_positions = game.get_all_free_positions()
     for move in all_positions:
-        temp_game = deepcopy(game)
+        # temp_game = deepcopy(game)
+        temp_game = Game()
+        temp_game.current_state.board = deepcopy(game.current_state.board)
         x, y = int(move['xy'][0]), int(move['xy'][1])
         temp_game.current_state.board[x][y] = player_turn
         moves.append([temp_game, move])
@@ -203,7 +207,7 @@ def minimax_1(game, depth, max_player, alpha, beta):
                 move.current_state.board[x][y] = 0
             heuris = minimax_1(move, depth-1, False, alpha, beta)
             maxHeuristic = max(maxHeuristic, heuris[0])
-
+    
             alpha = max(alpha, maxHeuristic)
             if beta <= alpha:
                 break
@@ -224,7 +228,7 @@ def minimax_1(game, depth, max_player, alpha, beta):
                 move.current_state.board[x][y] = 0
             heuris = minimax_1(move, depth-1, True, alpha, beta)
             minHeuristic = min(minHeuristic, heuris[0])
-
+        
             beta = min(beta, minHeuristic)
             if beta <= alpha:
                 break
@@ -234,10 +238,13 @@ def minimax_1(game, depth, max_player, alpha, beta):
         return minHeuristic, best_move
 
 def get_all_moves_2(game, player_turn):
+    from Game import Game
     moves = []
     all_moves = game.get_all_moves(player_turn)
     for move in all_moves:
-        temp_game = deepcopy(game)
+        # temp_game = deepcopy(game)
+        temp_game = Game()
+        temp_game.current_state.board = deepcopy(game.current_state.board)
         x1, y1 = int(move['xy1'][0]), int(move['xy1'][1])
         x2, y2 = int(move['xy2'][0]), int(move['xy2'][1])
         temp_game.current_state.board[x2][y2] = player_turn

@@ -6,7 +6,7 @@ class Board(object):
 
     def __init__(self):
         self.board = [
-            ["W", None, None, 0, None, None, 0],
+            [0, None, None, 0, None, None, 0],
             [None, 0, None, 0, None, 0, None],
             [None, None, 0, 0, 0 , None, None],
             [0, 0, 0, None, 0, 0, 0],
@@ -32,7 +32,6 @@ class Board(object):
             ["63", "53", "43"],
             ["34", "35", "36"]
         ]
-        ["00", "03", "06", "11", "13", "15", "22", "23", "24", "30", "31", "32", "34", "35", "36", "42", "43", "44", "51", "53", "55", "60", "63", "66"]
         self.all_deuces = [
             ["00", "03"],
             ["00", "30"],

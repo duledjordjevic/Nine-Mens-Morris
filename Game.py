@@ -1,4 +1,3 @@
-from turtle import position
 from Board import Board
 import time
 from copy import deepcopy
@@ -383,7 +382,6 @@ class Game(object):
 
     def play(self):
         while self.black_pieces_in_hand > 0:
-            break
             print(self.current_state)
             player_turn = "W"
             other_player = "B"
@@ -398,7 +396,7 @@ class Game(object):
                 self.delete_piece(other_player)
 
             start = time.time()
-            board = minimax_1(self,2, True, float("-inf"), float("inf"))[1].current_state
+            board = minimax_1(self,3, True, float("-inf"), float("inf"))[1].current_state
             end = time.time()
             print(end - start)
             self.current_state.board = board.board
@@ -422,7 +420,7 @@ class Game(object):
                 break
 
             start = time.time()
-            board = minimax_2(self,3, True, float("-inf"), float("inf"))[1].current_state
+            board = minimax_2(self,4, True, float("-inf"), float("inf"))[1].current_state
             end = time.time()
             print(end - start)
             self.current_state.board = board.board
