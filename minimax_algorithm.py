@@ -1,4 +1,4 @@
-from copy import deepcopy
+from copy import deepcopy, copy
 from tracemalloc import start
 # from Game import game
 import time
@@ -159,23 +159,28 @@ def heuristic(game, phase_of_game):
 
 def minimax_mice(game, player_turn):
     all_positions = game.get_all_used_positions(player_turn)
+    all_possible_posssitions = []
     best_move = None
     if player_turn == "W":
         best_value = float('-inf')
     else:
         best_value = float('inf')
     for move in all_positions:
-        x, y = int(move[0]), int(move[1])
-        game = deepcopy(game)
-        game.current_state.board[x][y] = 0
-        heuris = heuristic(game, 0)
-        if player_turn == "W":
-            best_value = max(best_value, heuris)
-        else:
-            best_value = min(best_value, heuris)
+        if not game.is_mice(move, player_turn):
+            all_possible_posssitions.append(move)
+    for move in all_positions:
+        if move in all_possible_posssitions or len(all_possible_posssitions) == 0:
+            x, y = int(move[0]), int(move[1])
+            game = deepcopy(game)
+            game.current_state.board[x][y] = 0
+            heuris = heuristic(game, 0)
+            if player_turn == "W":
+                best_value = max(best_value, heuris)
+            else:
+                best_value = min(best_value, heuris)
 
-        if best_value == heuris:
-            best_move = move
+            if best_value == heuris:
+                best_move = move
     return best_move
 
 def get_all_moves_1(game, player_turn):
